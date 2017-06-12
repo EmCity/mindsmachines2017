@@ -1,7 +1,5 @@
-import matplotlib.pyplot as plt
-import numpy as np
 import math
-from sklearn import datasets, linear_model, model_selection, preprocessing, metrics, svm,
+from sklearn import datasets, linear_model, model_selection, preprocessing, metrics, svm
 import pandas as pd
 
 
@@ -73,7 +71,6 @@ for column in df:
         le.fit(df[column])
         df[column] = le.transform(df[column])
 
-df.to_csv("cleaned_output_labeled.csv", sep=";")
 
 y = df['date_reception_OMP_new']
 X = df.drop('date_reception_OMP_new', axis=1)
@@ -83,6 +80,18 @@ X_train, X_test, y_train, y_test = model_selection.train_test_split(X, y, test_s
 
 regr = linear_model.LinearRegression()
 regr.fit(X_train, y_train)
-print(str(regr.score(X_test, y_test)))
-print(str(math.sqrt(metrics.mean_squared_error(y_test, regr.predict(X_test)))))
+pred_result = regr.predict(X_test)
 
+output_prediction = X_test
+output_prediction["true value"] = y_test
+output_prediction["predicted value"] = regr.predict(X_test)
+
+output_prediction.to_csv("prediction_result.csv", sep=';')
+
+print("linear regression " + str(regr.score(X_test, y_test)))
+print("linear regression " + str(math.sqrt(metrics.mean_squared_error(y_test, regr.predict(X_test)))))
+
+svr = svm.SVR()
+svr.fit(X_train, y_train)
+print("svr regression " + str(regr.score(X_test, y_test)))
+print("svr regression " + str(math.sqrt(metrics.mean_squared_error(y_test, regr.predict(X_test)))))
