@@ -30,7 +30,7 @@ pred_result = regr.predict(X_test)
 result_df = pd.concat([X_test, y_test], axis=1)
 pred_df = pd.DataFrame(data=pred_result,index=result_df.index, columns=['total_cycle_duration_predict'])
 result_df = pd.concat([result_df, pred_df], axis=1)
-result_df.to_csv("results/result_lin_reg.csv")
+result_df.to_csv("results/result_lin_reg.csv", sep=',')
 
 
 
