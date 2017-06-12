@@ -18,10 +18,12 @@ time_columns = ['date_reception_OMP', 'date_besoin_client',
                 'date_livraison_contractuelle', 'date_livraison_previsionnelle_S', 'date_reception_effective',
                 'date_livraison_contractuelle_initiale', 'date_liberation', 'date_affectation']
 
-df = pd.read_csv('data/train.csv',  parse_dates=time_columns)
-
 
 df = pd.read_csv('data/train.csv', parse_dates=time_columns)
+
+
+
+
 
 ## Iterate over all columns and drop sparse ones
 for column in df:
@@ -68,6 +70,10 @@ for column in time_columns:
         for i in range(len(df)):
             df.set_value(i, column + "_new", str(pd.Timestamp(df.loc[i,column]).value))
         df = df.drop(column, 1)
+
+# remove row which empty date_liberation or date_reception_OMP
+df = df[df['total_cycle_duration_new'].notnull()]
+# df = df[df.date_reception_OMP.notnull()]
 
 # write to csv
 df.to_csv("cleaned_output.csv", sep=";")
