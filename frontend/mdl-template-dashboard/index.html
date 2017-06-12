@@ -105,10 +105,10 @@
             <div class="chart"></div>
           </div>
           <div class="window" id="requests" >
-            <h1>TEST</h1>
+            <div class="bar-chart"></div>
           </div>
           <div class="window" id="queue" >
-            <h1>QUEUE BITCH</h1>
+            okgapkrsgora
           </div>
     </div>
       <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" style="position: fixed; left: -1000px; height: -1000px;">
@@ -204,15 +204,31 @@
     font-family: sans-serif;
   }
 
+    .axis2 {
+    font: 12px sans-serif;
+  }
+
+  .axis2 path,
+  .axis2 line {
+    fill: none;
+    stroke: #000;
+    shape-rendering: crispEdges;
+  }
+
+
     </style>
     <script>
 
+    loadOverview();
+
     function showOverview() {
       $(".window" ).hide();
+      loadOverview();
       $("#overview" ).show();
     }
     function showRequests() {
       $(".window" ).hide();
+      loadBar();
       $("#requests" ).show();
     }
     function showQueue() {
@@ -220,9 +236,15 @@
       $("#queue" ).show();
     }
 
+    // ########### OVERVIEW ##########
+
+    function loadOverview(){
+
+          $( ".chart" ).empty();
+
       var height = 300;
-  var width = 1000;
-  var margin = {top: 50, right:20, bottom: 50, left: 20};
+      var width = 1000;
+      var margin = {top: 50, right:20, bottom: 50, left: 20};
   
   // formatters for axis and labels
   var currencyFormat = d3.format("0.2f");
@@ -381,57 +403,86 @@
     return [slope, intercept, rSquare];
   }
 
-      /*
-      d3.csv("train.csv", function(dataset) {
-        console.log(dataset);
-        i = 0
-        for(i = 0; i < dataset.length; i++)
-        {
-            d3.select(".chart")
-            .selectAll("div")
-          .data(dataset[i].lag_time)
-            .enter().append("div")
-          .style("width", function(d) { return d * 10 + "px"; })
-          .text(function(d) { return d; });
-        }
-        //var data = [4, 8, 15, 16, 23, 42];
-        console.log("Iterated " + i + " times");
+}
 
-        //
-        var margin = {top: 20, right: 20, bottom: 70, left: 40},
-          width = 600 - margin.left - margin.right,
-          height = 300 - margin.top - margin.bottom;
+  // ########## Bars ############
+
+  function loadBar() {
+
+    $( ".bar-chart" ).empty();
+
+
+  var margin = {top: 20, right: 20, bottom: 110, left: 40},
+    width = 1000 - margin.left - margin.right,
+    height = 300 - margin.top - margin.bottom;
+
+
+  var x = d3.scale.ordinal().rangeRoundBands([0, width], .55);
+
+  var y = d3.scale.linear().range([height, 0]);
+
+  var xAxis = d3.svg.axis()
+      .scale(x)
+      .orient("bottom")
+      .ticks(10);
+
+  var yAxis = d3.svg.axis()
+      .scale(y)
+      .orient("left")
+      .ticks(10);
+
+  var svg = d3.select(".bar-chart").append("svg")
+      .attr("width", width + margin.left + margin.right)
+      .attr("height", height + margin.top + margin.bottom)
+    .append("g")
+      .attr("transform", 
+            "translate(" + margin.left + "," + margin.top + ")");
+
+  d3.csv("bar-data.csv", function(error, data) {
+
+      data.forEach(function(d) {
+          d.date = d.date;
+          d.value = +d.value;
       });
-      d3.csv('train.csv', function (data) {
-          var table = d3.select('body').append('table')
-          var thead = table.append('thead')
-          var tbody = table.append('tbody');
+    
+    x.domain(data.map(function(d) { return d.date; }));
+    y.domain([0, d3.max(data, function(d) { return d.value; })]);
 
-          // append the header row
-          thead.append('tr')
-            .selectAll('th')
-            .data(data.date_liberation).enter()
-            .append('th')
-              .text(function (column) { return column; });
+    svg.append("g")
+        .attr("class", "x axis2")
+        .attr("transform", "translate(0," + height + ")")
+        .call(xAxis)
+      .selectAll("text")
+        .style("text-anchor", "end")
+        .attr("dx", "-.8em")
+        .attr("dy", "-.55em")
+        .attr("transform", "rotate(-90)" );
 
-          // create a row for each object in the data
-          var rows = tbody.selectAll('tr')
-            .data(data)
-            .enter()
-            .append('tr');
+    svg.append("g")
+        .attr("class", "y axis2")
+        .call(yAxis)
+      .append("text")
+        .attr("transform", "rotate(-90)")
+        .attr("y", 6)
+        .attr("dy", ".71em")
+        .style("text-anchor", "end")
+        .text("Number of Requests");
 
-          // create a cell in each row for each column
-          var cells = rows.selectAll('td')
-            .data(function (row) {
-              return columns.map(function (column) {
-                return {column: column, value: row[column]};
-              });
-            })
-            .enter()
-            .append('td')
-              .text(function (d) { return d.value; });
-        });
-*/
+    svg.selectAll("bar")
+        .data(data)
+      .enter().append("rect")
+        .style("fill", "steelblue")
+        .attr("x", function(d) { return x(d.date); })
+        .attr("width", x.rangeBand())
+        .attr("y", function(d) { return y(d.value); })
+        .attr("height", function(d) { return height - y(d.value); });
+
+  });
+
+}
+
+
+      
 </script>
 
   </body>
