@@ -51,7 +51,7 @@ for column in df:
 for column in time_columns:
 	for i in range(len(df)):
 		df.set_value(i, column + "_new", str(pd.Timestamp(df.loc[i,column]).value))
-	df.drop(column)
+	df = df.drop(column, 1)
 
 df.to_csv("cleaned_output.csv", sep=";")
 
