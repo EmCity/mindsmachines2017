@@ -10,45 +10,25 @@ from sklearn import datasets, linear_model
 import pandas as pd
 df = pd.read_csv('data/train.csv')
 
-
-# df.dropna
-lags = df.lag_time
-
-NRC_standard_total = df.NRC_standard_total
-
-for i in range(len(df)):
-	if pd.isnull(NRC_standard_total[i]) or  pd.isnull(lags[i]) :
-		NRC_standard_total.pop(i)
-		lags.pop(i)
-		print("dropped" + str(i))
-
-#NRC_standard_total.dropna(how='any')
+## Iterate over all columns and drop sparse ones
+for column in df:
+    percent_nan = float(pd.isnull(df[column]).sum())/len(df[column])
+    # print(column + " " + str(float(pd.isnull(df[column]).sum())/len(df[column])))
+    if percent_nan > 0.1:
+        df = df.drop(column, 1)
+        print("dropped column: " + column)
 
 
-# Split the data into training/testing sets
-lags_train = lags[:-1000]
-lags_test = lags[-1000:]
+# for leftover nans, replyce with average
+for column in df:
+    try:
+        df[column].fillna((df[column].mean()), inplace=True)
+    except:
+    	most_common = df[column].value_counts().index[0]
+        df[column].fillna(most_common)
+        print("replaced nans with: " + str(most_common))
 
-# Split the data into training/testing sets
-NRC_standard_total_train = NRC_standard_total[:-1000]
-NRC_standard_total_test = NRC_standard_total[-1000:]
+#wirte to csv
 
-# Create linear regression object
-regr = linear_model.LinearRegression()
+df.to_csv("cleaned_output.csv", sep=";")
 
-# Train the model using the training sets
-regr.fit(NRC_standard_total_train, lags_train)
-
-
-# The coefficients
-print('Coefficients: \n', regr.coef_)
-# The mean squared error
-print("Mean squared error: %.2f"
-      % np.mean((regr.predict(NRC_standard_total_test) - lags_test) ** 2))
-# Explained variance score: 1 is perfect prediction
-print('Variance score: %.2f' % regr.score(NRC_standard_total_test, lags_test))
-
-# Plot outputs
-plt.scatter(NRC_standard_total_test, lags_test,  color='black')
-plt.plot(NRC_standard_total_test, regr.predict(NRC_standard_total_test), color='blue',
-         linewidth=3)
