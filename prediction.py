@@ -1,6 +1,7 @@
 import math
 from sklearn import datasets, linear_model, model_selection, preprocessing, metrics, svm
 import pandas as pd
+import numpy as np
 
 time_columns = ['date_reception_OMP_new', 'date_besoin_client_new', 'date_transmission_proc_new',
                 'date_emission_commande_new', 'date_livraison_contractuelle_new', 'date_livraison_previsionnelle_S_new',
@@ -26,11 +27,12 @@ regr = linear_model.LinearRegression()
 regr.fit(X_train, y_train)
 pred_result = regr.predict(X_test)
 
-output_prediction = X_test
-output_prediction["total_cycle_duration"] = y_test
-output_prediction["predict total_cycle_duration"] = pred_result
+result_df = pd.concat([X_test, y_test], axis=1)
+pred_df = pd.DataFrame(data=pred_result,index=result_df.index, columns=['total_cycle_duration_predict'])
+result_df = pd.concat([result_df, pred_df], axis=1)
+result_df.to_csv("results/result_lin_reg.csv", sep=',')
 
-output_prediction.to_csv("prediction_result.csv", sep=',')
+
 
 print("linear regression " + str(regr.score(X_test, y_test)))
 print("linear regression " + str(math.sqrt(metrics.mean_squared_error(y_test, regr.predict(X_test)))))
