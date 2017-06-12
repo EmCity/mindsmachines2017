@@ -321,17 +321,17 @@
     .scale(yScale)
     .orient("left");
   
-  d3.csv("prediction_result.csv", function(data) {
+  d3.csv("result_lin_reg.csv", function(data) {
     
     // extract the x labels for the axis and scale domain
     var xLabels = data.map(function (d) { return d['id_reference']; })
   
     xScale.domain(xLabels);
-    yScale.domain([0, Math.round(d3.max(data, function(d) { return parseFloat(d['predict_total_cycle_duration']); }))]);
+    yScale.domain([0, Math.round(d3.max(data, function(d) { return parseFloat(d['total_cycle_duration_predict']); }))]);
     
     var line = d3.svg.line()
       .x(function(d) { return xScale(d['id_reference']); })
-      .y(function(d) { return yScale(d['predict_total_cycle_duration']); });
+      .y(function(d) { return yScale(d['total_cycle_duration_predict']); });
     
     svg.append("path")
       .datum(data)
@@ -373,7 +373,7 @@
     
     // get the x and y values for least squares
     var xSeries = d3.range(1, xLabels.length + 1);
-    var ySeries = data.map(function(d) { return parseFloat(d['predict_total_cycle_duration']); });
+    var ySeries = data.map(function(d) { return parseFloat(d['total_cycle_duration_predict']); });
     
     var leastSquaresCoeff = leastSquares(xSeries, ySeries);
     
