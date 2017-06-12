@@ -73,8 +73,8 @@ for column in df:
 
 df.to_csv("cleaned_output_labeled.csv", sep=";")
 
-y = df['date_reception_OMP']
-X = df.drop('date_reception_OMP', axis=1)
+y = df['date_reception_OMP_new']
+X = df.drop('date_reception_OMP_new', axis=1)
 
 # model_selection.TimeSeriesSplit
 X_train, X_test, y_train, y_test = model_selection.train_test_split(X, y, test_size=0.8)
