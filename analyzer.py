@@ -8,6 +8,10 @@ from sklearn import datasets, linear_model, model_selection
 #	for row in reader:
 #		print(row[1])
 
+def normalize_time(input_time):
+	delta_time = pd.Series(pd.datetime(1970,1,1))
+	return (input_time - delta_time).dt.total_seconds()
+
 time_columns = ['date_reception_OMP','date_besoin_client',
 	'date_transmission_proc','date_emission_commande','date_prev_livraison_prog',
 	'date_reelle_livraison_prog','date_reelle_livraison_indus','date_prev_fin_usinage',
@@ -25,6 +29,8 @@ for column in df:
     # print(column + " " + str(float(pd.isnull(df[column]).sum())/len(df[column])))
     if percent_nan > 0.1:
         df = df.drop(column, 1)
+        if column in time_columns:
+        	time_columns.remove(str(column))	
         print("dropped column: " + column)
 
 
@@ -39,9 +45,13 @@ for column in df:
 
 #convert timestamps
 
+delta_time = pd.Series(pd.datetime(1970,1,1))
 
 for column in time_columns:
-	df[column] = pd.to_datetime(df[column], unit='s')
+	df[column].apply(normalize_time)
+	#for row in df[column]:
+	#	row = (row - delta_time).dt.total_seconds()
+	#df[column] = pd.to_datetime(df[column], unit='s')
 	#for in range(len(df)):
 
 df.to_csv("cleaned_output.csv", sep=";")
