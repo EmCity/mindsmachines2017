@@ -1,5 +1,6 @@
 import math
 from sklearn import datasets, linear_model, model_selection, preprocessing, metrics, svm
+import numpy as np
 import pandas as pd
 
 
@@ -50,48 +51,56 @@ for column in df:
         df[column].apply(lambda x:  fillnulls(x, most_common))
         print("replaced nans with: " + str(most_common))
 
+#calculate total_cycle_duration
+df['total_cycle_duration'] = df['date_liberation'] - df['date_reception_OMP']
+
 # convert timestamps
-
 delta_time = pd.Series(pd.datetime(1970, 1, 1))
-
+time_columns.append('total_cycle_duration')
 
 for column in time_columns:
-	for i in range(len(df)):
-		df.set_value(i, column + "_new", str(pd.Timestamp(df.loc[i,column]).value))
-	df = df.drop(column, 1)
+    print(str(column))
+    if column == 'total_cycle_duration':
+        for i in range(len(df)):
+            df.set_value(i, column + "_new", df.loc[i,column] / np.timedelta64(1, 's'))
+        df = df.drop(column, 1)
+    else:
+        for i in range(len(df)):
+            df.set_value(i, column + "_new", str(pd.Timestamp(df.loc[i,column]).value))
+        df = df.drop(column, 1)
 
 # write to csv
 df.to_csv("cleaned_output.csv", sep=";")
 
-
-for column in df:
-
-    if df[column].dtype == object:
-        le = preprocessing.LabelEncoder()
-        le.fit(df[column])
-        df[column] = le.transform(df[column])
-
-
-y = df['date_reception_OMP_new']
-X = df.drop('date_reception_OMP_new', axis=1)
-
-# model_selection.TimeSeriesSplit
-X_train, X_test, y_train, y_test = model_selection.train_test_split(X, y, test_size=0.3)
-
-regr = linear_model.LinearRegression()
-regr.fit(X_train, y_train)
-pred_result = regr.predict(X_test)
-
-output_prediction = X_test
-output_prediction["true value"] = y_test
-output_prediction["predicted value"] = regr.predict(X_test)
-
-output_prediction.to_csv("prediction_result.csv", sep=';')
-
-print("linear regression " + str(regr.score(X_test, y_test)))
-print("linear regression " + str(math.sqrt(metrics.mean_squared_error(y_test, regr.predict(X_test)))))
-
-svr = svm.SVR()
-svr.fit(X_train, y_train)
-print("svr regression " + str(regr.score(X_test, y_test)))
-print("svr regression " + str(math.sqrt(metrics.mean_squared_error(y_test, regr.predict(X_test)))))
+#
+# for column in df:
+#
+#     if df[column].dtype == object:
+#         le = preprocessing.LabelEncoder()
+#         le.fit(df[column])
+#         df[column] = le.transform(df[column])
+#
+#
+# y = df['date_reception_OMP_new']
+# X = df.drop('date_reception_OMP_new', axis=1)
+#
+# # model_selection.TimeSeriesSplit
+# X_train, X_test, y_train, y_test = model_selection.train_test_split(X, y, test_size=0.3)
+#
+# regr = linear_model.LinearRegression()
+# regr.fit(X_train, y_train)
+# pred_result = regr.predict(X_test)
+#
+# output_prediction = X_test
+# output_prediction["true value"] = y_test
+# output_prediction["predicted value"] = regr.predict(X_test)
+#
+# output_prediction.to_csv("prediction_result.csv", sep=';')
+#
+# print("linear regression " + str(regr.score(X_test, y_test)))
+# print("linear regression " + str(math.sqrt(metrics.mean_squared_error(y_test, regr.predict(X_test)))))
+#
+# svr = svm.SVR()
+# svr.fit(X_train, y_train)
+# print("svr regression " + str(regr.score(X_test, y_test)))
+# print("svr regression " + str(math.sqrt(metrics.mean_squared_error(y_test, regr.predict(X_test)))))
