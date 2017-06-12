@@ -251,6 +251,10 @@
     <script src="https://d3js.org/d3.v3.min.js"></script>
     <style>
 
+    .chart {
+      padding: 50px;
+    }
+
     .chart div {
       font: 10px sans-serif;
       background-color: steelblue;
@@ -291,10 +295,10 @@
   var margin = {top: 20, right:20, bottom: 50, left: 20};
   
   // formatters for axis and labels
-  var currencyFormat = d3.format("$0.2f");
+  var currencyFormat = d3.format("0.2f");
   var decimalFormat = d3.format("0.2f");
   
-  var svg = d3.select("body")
+  var svg = d3.select(".chart")
     .append("svg")
     .attr("width", width + margin.left + margin.right)
     .attr("height", height + margin.top + margin.bottom)
@@ -320,17 +324,17 @@
     .scale(yScale)
     .orient("left");
   
-  d3.csv("cleaned.csv", function(data) {
+  d3.csv("prediction_result.csv", function(data) {
     
     // extract the x labels for the axis and scale domain
     var xLabels = data.map(function (d) { return d['id_reference']; })
   
     xScale.domain(xLabels);
-    yScale.domain([0, Math.round(d3.max(data, function(d) { return parseFloat(d['epaisseur_brut_mm']); }))]);
+    yScale.domain([0, Math.round(d3.max(data, function(d) { return parseFloat(d['predict_total_cycle_duration']); }))]);
     
     var line = d3.svg.line()
       .x(function(d) { return xScale(d['id_reference']); })
-      .y(function(d) { return yScale(d['epaisseur_brut_mm']); });
+      .y(function(d) { return yScale(d['predict_total_cycle_duration']); });
     
     svg.append("path")
       .datum(data)
@@ -340,7 +344,7 @@
     svg.select(".x.axis")
       .attr("transform", "translate(0," + (height) + ")")
       .call(xAxis.tickValues(xLabels.filter(function(d, i) { 
-        if (i % 12 == 0)
+        if (i % 1 == 0)
           return d;
         })))
       .selectAll("text")
@@ -360,7 +364,7 @@
       .attr("text-anchor", "middle")
       .style("font-size", "16px")
       .style("font-family", "sans-serif")
-      .text("USD/EURO Exhange Rate");
+      .text("BLABLABLA");
     
     // x axis label
     svg.append("text")
@@ -368,15 +372,16 @@
       .attr("y", height + margin.bottom)
       .attr("class", "text-label")
       .attr("text-anchor", "middle")
-      .text("Year-Month");
+      .text("ID");
     
     // get the x and y values for least squares
     var xSeries = d3.range(1, xLabels.length + 1);
-    var ySeries = data.map(function(d) { return parseFloat(d['rate']); });
+    var ySeries = data.map(function(d) { return parseFloat(d['predict_total_cycle_duration']); });
     
     var leastSquaresCoeff = leastSquares(xSeries, ySeries);
     
     // apply the reults of the least squares regression
+
     var x1 = xLabels[0];
     var y1 = leastSquaresCoeff[0] + leastSquaresCoeff[1];
     var x2 = xLabels[xLabels.length - 1];
@@ -410,7 +415,6 @@
       .attr("class", "text-label")
       .attr("x", function(d) {return xScale(x2) - 60;})
       .attr("y", function(d) {return yScale(y2) - 10;});
-
   });
   
   // returns slope, intercept and r-square of the line
