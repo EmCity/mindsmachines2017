@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
 from sklearn import datasets, linear_model, model_selection
 
 #with open('train.csv') as csvfile:
@@ -8,9 +9,9 @@ from sklearn import datasets, linear_model, model_selection
 #	for row in reader:
 #		print(row[1])
 
-def normalize_time(input_time):
-	delta_time = pd.Series(pd.datetime(1970,1,1))
-	return (input_time - delta_time).dt.total_seconds()
+#def normalize_time(input_time):
+#	delta_time = pd.Series(pd.datetime(1970,1,1))
+#	return (input_time - delta_time).dt.total_seconds()
 
 time_columns = ['date_reception_OMP','date_besoin_client',
 	'date_transmission_proc','date_emission_commande','date_prev_livraison_prog',
@@ -19,7 +20,7 @@ time_columns = ['date_reception_OMP','date_besoin_client',
 	'date_livraison_contractuelle','date_livraison_previsionnelle_S','date_reception_effective',
 	'date_livraison_contractuelle_initiale','date_liberation','date_affectation']
 
-import pandas as pd
+
 df = pd.read_csv('data/train.csv',  parse_dates=time_columns)
 
 
@@ -45,14 +46,12 @@ for column in df:
 
 #convert timestamps
 
-delta_time = pd.Series(pd.datetime(1970,1,1))
+#delta_time = pd.Series(pd.datetime(1970,1,1))
 
 for column in time_columns:
-	df[column].apply(normalize_time)
-	#for row in df[column]:
-	#	row = (row - delta_time).dt.total_seconds()
-	#df[column] = pd.to_datetime(df[column], unit='s')
-	#for in range(len(df)):
+	for i in range(len(df)):
+		df.set_value(i, column + "_new", str(pd.Timestamp(df.loc[i,column]).value))
+	df.drop(column)
 
 df.to_csv("cleaned_output.csv", sep=";")
 
