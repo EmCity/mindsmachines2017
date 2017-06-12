@@ -37,7 +37,7 @@ result_df.to_csv("results/result_lin_reg.csv", sep=',')
 print("linear regression " + str(regr.score(X_test, y_test)))
 print("linear regression " + str(math.sqrt(metrics.mean_squared_error(y_test, regr.predict(X_test)))))
 
-svr = svm.SVR()
+svr = svm.SVR(kernel='poly')
 svr.fit(X_train, y_train)
 print("svr regression " + str(svr.score(X_test, y_test)))
 print("svr regression " + str(math.sqrt(metrics.mean_squared_error(y_test, svr.predict(X_test)))))
