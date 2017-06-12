@@ -175,7 +175,13 @@
       color: white;
     } 
 
-      .line {
+  .line {
+    stroke: red;
+    fill:none;
+    stroke-width: 1;
+  }
+
+  .line2 {
     stroke: blue;
     fill:none;
     stroke-width: 3;
@@ -215,8 +221,8 @@
     }
 
       var height = 300;
-  var width = 600;
-  var margin = {top: 50, right:20, bottom: 50, left: 80};
+  var width = 1000;
+  var margin = {top: 50, right:20, bottom: 50, left: 20};
   
   // formatters for axis and labels
   var currencyFormat = d3.format("0.2f");
@@ -259,16 +265,27 @@
     var line = d3.svg.line()
       .x(function(d) { return xScale(d['id_reference']); })
       .y(function(d) { return yScale(d['total_cycle_duration_predict']); });
+
+    var line2 = d3.svg.line()
+      .x(function(d) { return xScale(d['id_reference']); })
+      .y(function(d) { return yScale(d['total_cycle_duration_new']); });
+
+        svg.append("path")
+      .datum(data)
+      .attr("class","line2")
+      .attr("d", line2);
     
     svg.append("path")
       .datum(data)
       .attr("class","line")
       .attr("d", line);
+
+
     
     svg.select(".x.axis")
       .attr("transform", "translate(0," + (height) + ")")
       .call(xAxis.tickValues(xLabels.filter(function(d, i) { 
-        if (i % 1 == 0)
+        if (i % 10 == 0)
           return d;
         })))
       .selectAll("text")
