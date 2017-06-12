@@ -64,7 +64,7 @@ for column in time_columns:
     print(str(column))
     if column == 'total_cycle_duration':
         for i in range(len(df)):
-            df.set_value(i, column + "_new", df.loc[i,column] / np.timedelta64(1, 's'))
+            df.set_value(i, column + "_new", (df.loc[i,column] / np.timedelta64(1, 's')) / (60*60*24))
         df = df.drop(column, 1)
     else:
         for i in range(len(df)):

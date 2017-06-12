@@ -11,7 +11,6 @@ time_columns = ['date_reception_OMP_new', 'date_besoin_client_new', 'date_transm
 df = pd.read_csv("cleaned_output.csv", sep=";", parse_dates=time_columns)
 
 for column in df:
-
     if df[column].dtype == object:
         le = preprocessing.LabelEncoder()
         le.fit(df[column])
@@ -27,17 +26,21 @@ regr = linear_model.LinearRegression()
 regr.fit(X_train, y_train)
 pred_result = regr.predict(X_test)
 
-result_df = pd.concat([X_test, y_test], axis=1)
-pred_df = pd.DataFrame(data=pred_result,index=result_df.index, columns=['total_cycle_duration_predict'])
+result_df  = pd.concat([X_test, y_test], axis=1)
+pred_df = pd.DataFrame(data=pred_result, index=result_df.index, columns=['total_cycle_duration_predict'])
 result_df = pd.concat([result_df, pred_df], axis=1)
 result_df.to_csv("results/result_lin_reg.csv", sep=',')
+
+pred_df = pd.DataFrame(data=pred_result, index=result_df.index, columns=['total_cycle_duration_predict'])
+result_df = pd.concat([y_test, pred_df], axis=1)
+result_df.to_csv("results/result_only.csv", sep=',')
 
 
 
 print("linear regression " + str(regr.score(X_test, y_test)))
 print("linear regression " + str(math.sqrt(metrics.mean_squared_error(y_test, regr.predict(X_test)))))
 
-svr = svm.SVR(kernel='poly')
-svr.fit(X_train, y_train)
-print("svr regression " + str(svr.score(X_test, y_test)))
-print("svr regression " + str(math.sqrt(metrics.mean_squared_error(y_test, svr.predict(X_test)))))
+# svr = svm.SVR(kernel='poly')
+# svr.fit(X_train, y_train)
+# print("svr regression " + str(svr.score(X_test, y_test)))
+# print("svr regression " + str(math.sqrt(metrics.mean_squared_error(y_test, svr.predict(X_test)))))
