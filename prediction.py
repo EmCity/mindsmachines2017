@@ -2,7 +2,6 @@ import math
 from sklearn import datasets, linear_model, model_selection, preprocessing, metrics, svm
 import pandas as pd
 import numpy as np
-import pickle
 
 
 time_columns = ['date_reception_OMP_new', 'date_besoin_client_new', 'date_transmission_proc_new',

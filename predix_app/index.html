@@ -1,0 +1,569 @@
+<!doctype html>
+<!--
+  Material Design Lite
+  Copyright 2015 Google Inc. All rights reserved.
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+      https://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License
+-->
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="A front-end template that helps you build fast, modern mobile web apps.">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+    <title>Material Design Lite</title>
+
+    <!-- Add to homescreen for Chrome on Android -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <link rel="icon" sizes="192x192" href="images/android-desktop.png">
+
+    <!-- Add to homescreen for Safari on iOS -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="Material Design Lite">
+    <link rel="apple-touch-icon-precomposed" href="images/ios-desktop.png">
+
+    <!-- Tile icon for Win8 (144x144 + tile color) -->
+    <meta name="msapplication-TileImage" content="images/touch/ms-touch-icon-144x144-precomposed.png">
+    <meta name="msapplication-TileColor" content="#3372DF">
+
+    <link rel="shortcut icon" href="images/favicon.png">
+
+    <!-- SEO: If your mobile URL is different from the desktop URL, add a canonical link to the desktop page https://developers.google.com/webmasters/smartphone-sites/feature-phones -->
+    <!--
+    <link rel="canonical" href="http://www.example.com/">
+    -->
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:regular,bold,italic,thin,light,bolditalic,black,medium&amp;lang=en">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.cyan-light_blue.min.css">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+    #view-source {
+      position: fixed;
+      display: block;
+      right: 0;
+      bottom: 0;
+      margin-right: 40px;
+      margin-bottom: 40px;
+      z-index: 900;
+    }
+
+    .window{
+      display:none;
+    }
+
+    </style>
+  </head>
+  <body>
+    <div class="demo-layout mdl-layout mdl-js-layout mdl-layout--fixed-drawer mdl-layout--fixed-header">
+      <header class="demo-header mdl-layout__header mdl-color--grey-100 mdl-color-text--grey-600">
+        <div class="mdl-layout__header-row">
+          <span class="mdl-layout-title">Stelia Aerospace</span>
+          <div class="mdl-layout-spacer"></div>
+          <div class="mdl-textfield mdl-js-textfield mdl-textfield--expandable">
+            <label class="mdl-button mdl-js-button mdl-button--icon" for="search">
+              <i class="material-icons">search</i>
+            </label>
+            <div class="mdl-textfield__expandable-holder">
+              <input class="mdl-textfield__input" type="text" id="search">
+              <label class="mdl-textfield__label" for="search">Enter your query...</label>
+            </div>
+          </div>
+          <button class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon" id="hdrbtn">
+            <i class="material-icons">more_vert</i>
+          </button>
+          <ul class="mdl-menu mdl-js-menu mdl-js-ripple-effect mdl-menu--bottom-right" for="hdrbtn">
+            <li class="mdl-menu__item">About</li>
+            <li class="mdl-menu__item">Contact</li>
+            <li class="mdl-menu__item">Legal information</li>
+          </ul>
+        </div>
+      </header>
+      <div class="demo-drawer mdl-layout__drawer mdl-color--blue-grey-900 mdl-color-text--blue-grey-50">
+        <nav class="demo-navigation mdl-navigation mdl-color--blue-grey-800">
+          <a class="mdl-navigation__link" onclick="showOverview()"><i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">home</i>Overview</a>
+          <a class="mdl-navigation__link" onclick="showRequests()"><i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">inbox</i>Requests</a>
+          <a class="mdl-navigation__link" onclick="showQueue()"><i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">flag</i>Queue Management</a>
+          <div class="mdl-layout-spacer"></div> 
+          <a class="mdl-navigation__link" href=""><i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">help_outline</i><span class="visuallyhidden">Help</span></a>
+        </nav>
+      </div>
+      <main class="mdl-layout__content mdl-color--grey-100">
+        <div class="mdl-grid demo-content">
+          <div class="window" id="overview" style="display:block;" >
+            <div class="chart"></div>
+          </div>
+          <div class="window" id="requests" >
+            <div class="bar-chart"></div>
+            <div>
+               <table id="delivery">
+                <tr style="background-color:steelblue;" style="font-size: 20px; text-align:center;">
+                    <th>REF NO</th>
+                    <th>Type</th>
+                    <th>Due Date</th>
+                    <th>Days Left</th>
+                </tr>
+              </table>
+              <div style="text-align:center;margin-top:5px;">
+                <button id="loadButton" class="mdl-button mdl-js-button mdl-button--fab mdl-button--colored" onclick="loadMore()">
+                  <i class="material-icons">add</i>
+                </button>
+                <div style="display:none;margin: 0px auto;" id="loader"></div>
+              <div>
+                
+            </div>
+          </div>
+          <div class="window" id="queue" >
+            okgapkrsgora
+          </div>
+    </div>
+      <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" style="position: fixed; left: -1000px; height: -1000px;">
+        <defs>
+          <mask id="piemask" maskContentUnits="objectBoundingBox">
+            <circle cx=0.5 cy=0.5 r=0.49 fill="white" />
+            <circle cx=0.5 cy=0.5 r=0.40 fill="black" />
+          </mask>
+          <g id="piechart">
+            <circle cx=0.5 cy=0.5 r=0.5 />
+            <path d="M 0.5 0.5 0.5 0 A 0.5 0.5 0 0 1 0.95 0.28 z" stroke="none" fill="rgba(255, 255, 255, 0.75)" />
+          </g>
+        </defs>
+      </svg>
+      <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 500 250" style="position: fixed; left: -1000px; height: -1000px;">
+        <defs>
+          <g id="chart">
+            <g id="Gridlines">
+              <line fill="#888888" stroke="#888888" stroke-miterlimit="10" x1="0" y1="27.3" x2="468.3" y2="27.3" />
+              <line fill="#888888" stroke="#888888" stroke-miterlimit="10" x1="0" y1="66.7" x2="468.3" y2="66.7" />
+              <line fill="#888888" stroke="#888888" stroke-miterlimit="10" x1="0" y1="105.3" x2="468.3" y2="105.3" />
+              <line fill="#888888" stroke="#888888" stroke-miterlimit="10" x1="0" y1="144.7" x2="468.3" y2="144.7" />
+              <line fill="#888888" stroke="#888888" stroke-miterlimit="10" x1="0" y1="184.3" x2="468.3" y2="184.3" />
+            </g>
+            <g id="Numbers">
+              <text transform="matrix(1 0 0 1 485 29.3333)" fill="#888888" font-family="'Roboto'" font-size="9">500</text>
+              <text transform="matrix(1 0 0 1 485 69)" fill="#888888" font-family="'Roboto'" font-size="9">400</text>
+              <text transform="matrix(1 0 0 1 485 109.3333)" fill="#888888" font-family="'Roboto'" font-size="9">300</text>
+              <text transform="matrix(1 0 0 1 485 149)" fill="#888888" font-family="'Roboto'" font-size="9">200</text>
+              <text transform="matrix(1 0 0 1 485 188.3333)" fill="#888888" font-family="'Roboto'" font-size="9">100</text>
+              <text transform="matrix(1 0 0 1 0 249.0003)" fill="#888888" font-family="'Roboto'" font-size="9">1</text>
+              <text transform="matrix(1 0 0 1 78 249.0003)" fill="#888888" font-family="'Roboto'" font-size="9">2</text>
+              <text transform="matrix(1 0 0 1 154.6667 249.0003)" fill="#888888" font-family="'Roboto'" font-size="9">3</text>
+              <text transform="matrix(1 0 0 1 232.1667 249.0003)" fill="#888888" font-family="'Roboto'" font-size="9">4</text>
+              <text transform="matrix(1 0 0 1 309 249.0003)" fill="#888888" font-family="'Roboto'" font-size="9">5</text>
+              <text transform="matrix(1 0 0 1 386.6667 249.0003)" fill="#888888" font-family="'Roboto'" font-size="9">6</text>
+              <text transform="matrix(1 0 0 1 464.3333 249.0003)" fill="#888888" font-family="'Roboto'" font-size="9">7</text>
+            </g>
+            <g id="Layer_5">
+              <polygon opacity="0.36" stroke-miterlimit="10" points="0,223.3 48,138.5 154.7,169 211,88.5
+              294.5,80.5 380,165.2 437,75.5 469.5,223.3 	"/>
+            </g>
+            <g id="Layer_4">
+              <polygon stroke-miterlimit="10" points="469.3,222.7 1,222.7 48.7,166.7 155.7,188.3 212,132.7
+              296.7,128 380.7,184.3 436.7,125 	"/>
+            </g>
+          </g>
+        </defs>
+      </svg>
+      <!-- 
+      <a href="https://github.com/google/material-design-lite/blob/mdl-1.x/templates/dashboard/" target="_blank" id="view-source" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored mdl-color-text--white">View Source</a> -->
+    <script src="https://code.getmdl.io/1.3.0/material.min.js"></script>
+    <script src="https://d3js.org/d3.v3.min.js"></script>
+    <script src="https://code.jquery.com/jquery-latest.js"></script>
+    <script src="jquery-csv.js"></script>
+    <style>
+
+
+    .chart div {
+      font: 10px sans-serif;
+      background-color: steelblue;
+      text-align: right;
+      padding: 3px;
+      margin: 1px;
+      color: white;
+    } 
+
+  .line {
+    stroke: red;
+    fill:none;
+    stroke-width: 1;
+  }
+
+  .line2 {
+    stroke: blue;
+    fill:none;
+    stroke-width: 3;
+  }
+  
+  .axis path,
+  .axis line {
+    fill: none;
+    stroke: black;
+    shape-rendering: crispEdges;
+  }
+  
+  .axis text {
+    font-size: 10px;
+    font-family: sans-serif;
+  }
+  
+  .text-label {
+    font-size: 10px;
+    font-family: sans-serif;
+  }
+
+    .axis2 {
+    font: 12px sans-serif;
+  }
+
+  .axis2 path,
+  .axis2 line {
+    fill: none;
+    stroke: #000;
+    shape-rendering: crispEdges;
+  }
+
+    .barChart {
+    fill: steelblue;
+  }
+
+  .barChart:hover {
+    fill: brown;
+  }
+
+  table, th, td {
+                border-bottom: 1px solid black;
+                padding: 15px;
+            }
+            table {
+                width: 100%;
+                border-spacing: 0px;
+                font-size: 15px;
+            }
+            tr:nth-child(odd) {background-color: lightsteelblue}
+            tr:hover {background-color: brown}
+            
+
+    #loader {
+    border: 16px solid #f3f3f3; /* Light grey */
+    border-top: 16px solid #3498db; /* Blue */
+    border-radius: 50%;
+    width: 120px;
+    height: 120px;
+    animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+    </style>
+    <script>
+
+    loadOverview();
+
+    function showOverview() {
+      $(".window" ).hide();
+      loadOverview();
+      $("#overview" ).show();
+    }
+    function showRequests() {
+      $(".window" ).hide();
+      loadBar();
+      $("#requests" ).show();
+    }
+    function showQueue() {
+      $(".window" ).hide();
+      $("#queue" ).show();
+    }
+
+    // ########### OVERVIEW ##########
+
+    function loadOverview(){
+
+          $( ".chart" ).empty();
+
+      var height = 300;
+      var width = 1000;
+      var margin = {top: 50, right:20, bottom: 50, left: 20};
+  
+  // formatters for axis and labels
+  var currencyFormat = d3.format("0.2f");
+  var decimalFormat = d3.format("0.2f");
+  
+  var svg = d3.select(".chart")
+    .append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+  
+  svg.append("g")
+    .attr("class", "y axis");
+    
+  svg.append("g")
+    .attr("class", "x axis");
+    
+  var xScale = d3.scale.ordinal()
+    .rangeRoundBands([margin.left, width], .1);
+    
+  var yScale = d3.scale.linear()
+    .range([height, 0]);
+  
+  var xAxis = d3.svg.axis()
+    .scale(xScale)
+    .orient("bottom");
+    
+  var yAxis = d3.svg.axis()
+    .scale(yScale)
+    .orient("left");
+  
+  d3.csv("result_lin_reg.csv", function(data) {
+    
+    // extract the x labels for the axis and scale domain
+    var xLabels = data.map(function (d) { return d['id_reference']; })
+  
+    xScale.domain(xLabels);
+    yScale.domain([0, Math.round(d3.max(data, function(d) { return parseFloat(d['total_cycle_duration_predict']); }))]);
+    
+    var line = d3.svg.line()
+      .x(function(d) { return xScale(d['id_reference']); })
+      .y(function(d) { return yScale(d['total_cycle_duration_predict']); });
+
+    var line2 = d3.svg.line()
+      .x(function(d) { return xScale(d['id_reference']); })
+      .y(function(d) { return yScale(d['total_cycle_duration_new']); });
+
+        svg.append("path")
+      .datum(data)
+      .attr("class","line2")
+      .attr("d", line2);
+    
+    svg.append("path")
+      .datum(data)
+      .attr("class","line")
+      .attr("d", line);
+
+
+    
+    svg.select(".x.axis")
+      .attr("transform", "translate(0," + (height) + ")")
+      .call(xAxis.tickValues(xLabels.filter(function(d, i) { 
+        if (i % 10 == 0)
+          return d;
+        })))
+      .selectAll("text")
+      .style("text-anchor","end")
+      .attr("transform", function(d) {
+        return "rotate(-45)";
+      });
+    
+    svg.select(".y.axis")
+      .attr("transform", "translate(" + (margin.left) + ",0)")
+      .call(yAxis.tickFormat(currencyFormat));
+      
+    // chart title
+    svg.append("text")
+      .attr("x", (width + (margin.left + margin.right) )/ 2)
+      .attr("y", 0 + margin.top)
+      .attr("text-anchor", "middle")
+      .style("font-size", "20px")
+      .style("font-family", "sans-serif")
+      .text("Cycle Time Prediction");
+    
+    // x axis label
+    svg.append("text")
+      .attr("x", (width + (margin.left + margin.right) )/ 2)
+      .attr("y", height + margin.bottom)
+      .attr("class", "text-label")
+      .attr("text-anchor", "middle")
+      .text("ID");
+    
+    // get the x and y values for least squares
+    var xSeries = d3.range(1, xLabels.length + 1);
+    var ySeries = data.map(function(d) { return parseFloat(d['total_cycle_duration_predict']); });
+    
+    var leastSquaresCoeff = leastSquares(xSeries, ySeries);
+    
+    // apply the reults of the least squares regression
+
+    var x1 = xLabels[0];
+    var y1 = leastSquaresCoeff[0] + leastSquaresCoeff[1];
+    var x2 = xLabels[xLabels.length - 1];
+    var y2 = leastSquaresCoeff[0] * xSeries.length + leastSquaresCoeff[1];
+    var trendData = [[x1,y1,x2,y2]];
+    
+    var trendline = svg.selectAll(".trendline")
+      .data(trendData);
+      
+    trendline.enter()
+      .append("line")
+      .attr("class", "trendline")
+      .attr("x1", function(d) { return xScale(d[0]); })
+      .attr("y1", function(d) { return yScale(d[1]); })
+      .attr("x2", function(d) { return xScale(d[2]); })
+      .attr("y2", function(d) { return yScale(d[3]); })
+      .attr("stroke", "black")
+      .attr("stroke-width", 1);
+    
+    // display equation on the chart
+    svg.append("text")
+      .text("eq: " + decimalFormat(leastSquaresCoeff[0]) + "x + " + 
+        decimalFormat(leastSquaresCoeff[1]))
+      .attr("class", "text-label")
+      .attr("x", function(d) {return xScale(x2) - 60;})
+      .attr("y", function(d) {return yScale(y2) - 30;});
+    
+    // display r-square on the chart
+    svg.append("text")
+      .text("r-sq: " + decimalFormat(leastSquaresCoeff[2]))
+      .attr("class", "text-label")
+      .attr("x", function(d) {return xScale(x2) - 60;})
+      .attr("y", function(d) {return yScale(y2) - 10;});
+  });
+  
+  // returns slope, intercept and r-square of the line
+  function leastSquares(xSeries, ySeries) {
+    var reduceSumFunc = function(prev, cur) { return prev + cur; };
+    
+    var xBar = xSeries.reduce(reduceSumFunc) * 1.0 / xSeries.length;
+    var yBar = ySeries.reduce(reduceSumFunc) * 1.0 / ySeries.length;
+
+    var ssXX = xSeries.map(function(d) { return Math.pow(d - xBar, 2); })
+      .reduce(reduceSumFunc);
+    
+    var ssYY = ySeries.map(function(d) { return Math.pow(d - yBar, 2); })
+      .reduce(reduceSumFunc);
+      
+    var ssXY = xSeries.map(function(d, i) { return (d - xBar) * (ySeries[i] - yBar); })
+      .reduce(reduceSumFunc);
+      
+    var slope = ssXY / ssXX;
+    var intercept = yBar - (xBar * slope);
+    var rSquare = Math.pow(ssXY, 2) / (ssXX * ssYY);
+    
+    return [slope, intercept, rSquare];
+  }
+
+}
+
+  // ########## Bars ############
+
+  function loadBar() {
+
+    $( ".bar-chart" ).empty();
+
+
+  var margin = {top: 20, right: 20, bottom: 110, left: 40},
+    width = 1000 - margin.left - margin.right,
+    height = 300 - margin.top - margin.bottom;
+
+
+  var x = d3.scale.ordinal().rangeRoundBands([0, width], .55);
+
+  var y = d3.scale.linear().range([height, 0]);
+
+  var xAxis = d3.svg.axis()
+      .scale(x)
+      .orient("bottom")
+      .ticks(10);
+
+  var yAxis = d3.svg.axis()
+      .scale(y)
+      .orient("left")
+      .ticks(10);
+
+  var svg = d3.select(".bar-chart").append("svg")
+      .attr("width", width + margin.left + margin.right)
+      .attr("height", height + margin.top + margin.bottom)
+    .append("g")
+      .attr("transform", 
+            "translate(" + margin.left + "," + margin.top + ")");
+
+  d3.csv("bar-data.csv", function(error, data) {
+
+      data.forEach(function(d) {
+          d.date = d.date;
+          d.value = +d.value;
+      });
+    
+    x.domain(data.map(function(d) { return d.date; }));
+    y.domain([0, d3.max(data, function(d) { return d.value; })]);
+
+    svg.append("g")
+        .attr("class", "x axis2")
+        .attr("transform", "translate(0," + height + ")")
+        .call(xAxis)
+      .selectAll("text")
+        .style("text-anchor", "end")
+        .attr("dx", "-.8em")
+        .attr("dy", "-.55em")
+        .attr("transform", "rotate(-90)" );
+
+    svg.append("g")
+        .attr("class", "y axis2")
+        .call(yAxis)
+      .append("text")
+        .attr("transform", "rotate(-90)")
+        .attr("y", 6)
+        .attr("dy", ".71em")
+        .style("text-anchor", "end")
+        .text("Number of Requests");
+
+    svg.selectAll("bar")
+        .data(data)
+      .enter().append("rect")
+        .attr("class","barChart")
+        .attr("x", function(d) { return x(d.date); })
+        .attr("width", x.rangeBand())
+        .attr("y", function(d) { return y(d.value); })
+        .attr("height", function(d) { return height - y(d.value); });
+
+  });
+
+var types =Array("PE","PE Equipée","SS Ensemble");
+
+  for(count = 0; count < 10; count++){
+    var daysLeft = (Math.floor(Math.random() * (5 - 0 + 1)) + 0);
+    var daysLeftCss = "";
+    if(daysLeft==0){
+      daysLeftCss = "style=color:red;";
+    }
+    
+    $("#delivery").append("<tr><th>"+ Math.random()*1000 +"</th><th>" + types[Math.floor(Math.random()*types.length)]+"</th><th>"+ (Math.floor(Math.random() * (30 - 25 + 1)) + 25)+" days </th><th " + daysLeftCss + ">"+ daysLeft +" days left</th></tr>");
+  }
+}
+
+function loadMore() {
+  document.getElementById("loadButton").style.display="none";
+  document.getElementById("loader").style.display="block";
+  var types =Array("PE","PE Equipée","SS Ensemble");
+  setTimeout(function() {
+    for(count = 0; count < 10; count++){
+      var daysLeft = (Math.floor(Math.random() * (5 - 0 + 1)) + 0);
+      var daysLeftCss = "";
+      if(daysLeft==0){
+        daysLeftCss = "style=color:red;";
+      }
+      
+      $("#delivery").append("<tr><th>"+ Math.random()*1000 +"</th><th>" + types[Math.floor(Math.random()*types.length)]+"</th><th>"+ (Math.floor(Math.random() * (30 - 25 + 1)) + 25)+" days </th><th " + daysLeftCss + ">"+ daysLeft +" days left</th></tr>");
+    }
+    document.getElementById("loader").style.display="none";
+    document.getElementById("loadButton").style.display="block";
+  }
+, 2000);}
+      
+</script>
+
+  </body>
+</html>
