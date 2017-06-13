@@ -94,7 +94,7 @@
         <nav class="demo-navigation mdl-navigation mdl-color--blue-grey-800">
           <a class="mdl-navigation__link" onclick="showOverview()"><i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">home</i>Overview</a>
           <a class="mdl-navigation__link" onclick="showRequests()"><i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">inbox</i>Requests</a>
-          <a class="mdl-navigation__link" onclick="showQueue()"><i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">flag</i>Queue Management</a>
+          <a class="mdl-navigation__link" onclick="showQueue()"><i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">flag</i>Real-time Monitoring</a>
           <div class="mdl-layout-spacer"></div> 
           <a class="mdl-navigation__link" href=""><i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">help_outline</i><span class="visuallyhidden">Help</span></a>
         </nav>
@@ -106,7 +106,6 @@
           </div>
           <div class="window" id="requests" >
             <div class="bar-chart"></div>
-            <div>
                <table id="delivery">
                 <tr style="background-color:steelblue;" style="font-size: 20px; text-align:center;">
                     <th>REF NO</th>
@@ -120,12 +119,13 @@
                   <i class="material-icons">add</i>
                 </button>
                 <div style="display:none;margin: 0px auto;" id="loader"></div>
-              <div>
-                
-            </div>
+              </div>
           </div>
           <div class="window" id="queue" >
-            okgapkrsgora
+            <div  style="width=100%;font-size:40px;margin: 25px;">
+              <span style="margin-right:20px;"> Load Assembly Line #1: </span>
+              <span style="color:green;" id="liveTracker"> ... </span>
+            </div>
           </div>
     </div>
       <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" style="position: fixed; left: -1000px; height: -1000px;">
@@ -286,6 +286,11 @@
     function showQueue() {
       $(".window" ).hide();
       $("#queue" ).show();
+      window.setInterval(function(){
+        $.get("http://taschenanwalt.pythonanywhere.com/fetch", function( data ) {
+          $("#liveTracker" ).html(data.results[Object.keys(data.results).length-1]);
+        })
+      }, 1000);
     }
 
     // ########### OVERVIEW ##########

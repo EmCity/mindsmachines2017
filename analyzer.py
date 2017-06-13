@@ -59,7 +59,7 @@ for column in df:
 #calculate total_cycle_duration
 df['total_cycle_duration'] = df['date_liberation'] - df['date_reception_OMP']
 print("Vales of columns", df.columns.values)
-df['delay_liberation'] =  df['date_liberation'] - df['date_livraison_previsionnelle_S']
+df['delay_liberation'] = df['date_liberation'] - df['date_livraison_previsionnelle_S']
 
 # convert timestamps
 delta_time = pd.Series(pd.datetime(1970, 1, 1))
