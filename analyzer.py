@@ -16,7 +16,7 @@ time_columns = ['date_reception_OMP', 'date_besoin_client',
                 'date_reelle_livraison_prog', 'date_reelle_livraison_indus', 'date_prev_fin_usinage',
                 'date_reelle_fin_usinage', 'date_prev_fin_TS', 'date_reelle_fin_TS', 'date_expedition',
                 'date_livraison_contractuelle', 'date_livraison_previsionnelle_S', 'date_reception_effective',
-                'date_livraison_contractuelle_initiale', 'date_liberation', 'date_affectation']
+                'date_livraison_contractuelle_initiale', 'date_liberation', 'date_affectation', 'date_liberation_previsionelle']
 
 
 df = pd.read_csv('data/train.csv', parse_dates=time_columns)
@@ -58,14 +58,21 @@ for column in df:
 
 #calculate total_cycle_duration
 df['total_cycle_duration'] = df['date_liberation'] - df['date_reception_OMP']
+print("Vales of columns", df.columns.values)
+df['delay_liberation'] =  df['date_liberation'] - df['date_livraison_previsionnelle_S']
 
 # convert timestamps
 delta_time = pd.Series(pd.datetime(1970, 1, 1))
 time_columns.append('total_cycle_duration')
+time_columns.append('delay_liberation')
 
 for column in time_columns:
     print(str(column))
     if column == 'total_cycle_duration':
+        for i in range(len(df)):
+            df.set_value(i, column + "_new", (df.loc[i,column] / np.timedelta64(1, 's')) / (60*60*24))
+        df = df.drop(column, 1)
+    elif column == 'delay_liberation':
         for i in range(len(df)):
             df.set_value(i, column + "_new", (df.loc[i,column] / np.timedelta64(1, 's')) / (60*60*24))
         df = df.drop(column, 1)
