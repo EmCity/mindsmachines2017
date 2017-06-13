@@ -60,16 +60,20 @@ for column in df:
 
 # calculate total_cycle_duration
 df['total_cycle_duration'] = df['date_liberation'] - df['date_reception_OMP']
-
+df['delay_liberation'] =  df['date_liberation'] - df['date_livraison_previsionnelle_S']
 
 # convert timestamps
 delta_time = pd.Series(pd.datetime(1970, 1, 1))
 time_columns.append('total_cycle_duration')
-
+time_columns.append('delay_liberation')
 
 for column in time_columns:
     print(str(column))
     if column == 'total_cycle_duration':
+        for i in range(len(df)):
+            df.set_value(i, column + "_new", (df.loc[i,column] / np.timedelta64(1, 's')) / (60*60*24))
+        df = df.drop(column, 1)
+    elif column == 'delay_liberation':
         for i in range(len(df)):
             df.set_value(i, column + "_new", (df.loc[i,column] / np.timedelta64(1, 's')) / (60*60*24))
         df = df.drop(column, 1)

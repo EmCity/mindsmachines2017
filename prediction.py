@@ -36,6 +36,7 @@ for column in df_test:
 
 X = df.drop('date_liberation_new', axis=1)
 X = X.drop('date_reception_OMP_new', axis=1)
+X = X.drop('delay_liberation', axis=1)
 
 # model_selection.TimeSeriesSplit
 X_train, X_test, y_train, y_test = model_selection.train_test_split(X, y, test_size=0.3)
