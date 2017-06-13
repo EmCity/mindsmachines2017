@@ -4,11 +4,9 @@ import numpy as np
 import pandas as pd
 
 
-
 def normalize_time(input_time):
     delta_time = pd.Series(pd.datetime(1970, 1, 1))
     return (input_time - delta_time).dt.total_seconds()
-
 
 
 time_columns = ['date_reception_OMP', 'date_besoin_client',
@@ -18,26 +16,30 @@ time_columns = ['date_reception_OMP', 'date_besoin_client',
                 'date_livraison_contractuelle', 'date_livraison_previsionnelle_S', 'date_reception_effective',
                 'date_livraison_contractuelle_initiale', 'date_liberation', 'date_affectation']
 
+df = pd.read_csv('data/test.csv', parse_dates=time_columns)
 
-df = pd.read_csv('data/train.csv', parse_dates=time_columns)
+# remove same collums as in train.csv
 
 
 
-remove_data = []
+to_drop_frame = ['longueur_piece_brut_mm', 'largeur_piece_brut_mm', 'epaisseur_brut_mm', 'debit_mm2',
+                 'codes_protections', 'complexite_piece_pp', 'indice_client', 'factory', 'usine', 'priorite',
+                 'advancement_percentage_tooling', 'date_prev_livraison_outillage', 'date_reelle_livraison_outillage',
+                 'advancement_percentage_program', 'date_prev_livraison_prog', 'date_reelle_livraison_prog',
+                 'advancement_percentage_industrialization', 'date_prev_livraison_indus', 'date_reelle_livraison_indus',
+                 'type_lot', 'date_prev_fin_usinage', 'date_reelle_fin_usinage', 'lieu_TS', 'date_prev_fin_TS',
+                 'date_reelle_fin_TS', 'date_prev_reception_QI_fournisseur', 'date_reelle_reception_QI_fournisseur',
+                 'lieu_equipement', 'date_prev_fin_equipement', 'date_reelle_fin_equipement', 'date_expedition',
+                 'quantite_expediee', 'ecart_commande', 'date_creation_nomenclature_appro',
+                 'date_reception_matiere_fournisseur', 'date_liberation_previsionelle', 'quantite_liberee']
 
 ## Iterate over all columns and drop sparse ones
-for column in df:
-    percent_nan = float(pd.isnull(df[column]).sum()) / len(df[column])
-    # print(column + " " + str(float(pd.isnull(df[column]).sum())/len(df[column])))
-    if percent_nan > 0.1:
-        df = df.drop(column, 1)
-        if column in time_columns:
-            time_columns.remove(str(column))
-        print("dropped column: " + column)
-        remove_data.append(column)
+for column in to_drop_frame:
+    df = df.drop(column, 1)
+    if column in time_columns:
+        time_columns.remove(str(column))
 
 
-print(remove_data)
 # for leftover nans, replyce with average
 def fillnulls(input_data, replace_value):
     if pd.isnull(input_data):
@@ -49,19 +51,21 @@ def fillnulls(input_data, replace_value):
 for column in df:
     try:
         df[column].fillna((df[column].mean()), inplace=True)
-        df[column].apply(lambda x:  fillnulls(x, df[column].mean()))
+        df[column].apply(lambda x: fillnulls(x, df[column].mean()))
     except:
         most_common = df[column].value_counts().index[0]
         df[column].fillna(most_common)
-        df[column].apply(lambda x:  fillnulls(x, most_common))
+        df[column].apply(lambda x: fillnulls(x, most_common))
         print("replaced nans with: " + str(most_common))
 
-#calculate total_cycle_duration
+# calculate total_cycle_duration
 df['total_cycle_duration'] = df['date_liberation'] - df['date_reception_OMP']
+
 
 # convert timestamps
 delta_time = pd.Series(pd.datetime(1970, 1, 1))
 time_columns.append('total_cycle_duration')
+
 
 for column in time_columns:
     print(str(column))
@@ -74,42 +78,9 @@ for column in time_columns:
             df.set_value(i, column + "_new", str(pd.Timestamp(df.loc[i,column]).value))
         df = df.drop(column, 1)
 
+
 # remove row which empty date_liberation or date_reception_OMP
-df = df[df['total_cycle_duration_new'].notnull()]
 # df = df[df.date_reception_OMP.notnull()]
 
 # write to csv
-df.to_csv("cleaned_output.csv", sep=";")
-
-#
-# for column in df:
-#
-#     if df[column].dtype == object:
-#         le = preprocessing.LabelEncoder()
-#         le.fit(df[column])
-#         df[column] = le.transform(df[column])
-#
-#
-# y = df['date_reception_OMP_new']
-# X = df.drop('date_reception_OMP_new', axis=1)
-#
-# # model_selection.TimeSeriesSplit
-# X_train, X_test, y_train, y_test = model_selection.train_test_split(X, y, test_size=0.3)
-#
-# regr = linear_model.LinearRegression()
-# regr.fit(X_train, y_train)
-# pred_result = regr.predict(X_test)
-#
-# output_prediction = X_test
-# output_prediction["true value"] = y_test
-# output_prediction["predicted value"] = regr.predict(X_test)
-#
-# output_prediction.to_csv("prediction_result.csv", sep=';')
-#
-# print("linear regression " + str(regr.score(X_test, y_test)))
-# print("linear regression " + str(math.sqrt(metrics.mean_squared_error(y_test, regr.predict(X_test)))))
-#
-# svr = svm.SVR()
-# svr.fit(X_train, y_train)
-# print("svr regression " + str(regr.score(X_test, y_test)))
-# print("svr regression " + str(math.sqrt(metrics.mean_squared_error(y_test, regr.predict(X_test)))))
+df.to_csv("cleaned_output_test.csv", sep=";")
