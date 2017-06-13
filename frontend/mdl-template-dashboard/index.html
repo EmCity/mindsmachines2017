@@ -106,6 +106,17 @@
           </div>
           <div class="window" id="requests" >
             <div class="bar-chart"></div>
+            <div>
+               <table id="delivery">
+                <tr style="background-color:steelblue;" style="font-size: 20px; text-align:center;">
+                    <th>REF NO</th>
+                    <th>Type</th>
+                    <th>Total</th>
+                    <th>Due Date </th>
+                    <th>Device</th>
+                </tr>
+              </table>
+            </div>
           </div>
           <div class="window" id="queue" >
             okgapkrsgora
@@ -214,6 +225,27 @@
     stroke: #000;
     shape-rendering: crispEdges;
   }
+
+    .barChart {
+    fill: steelblue;
+  }
+
+  .barChart:hover {
+    fill: brown;
+  }
+
+  table, th, td {
+                border-bottom: 1px solid black;
+                padding: 15px;
+            }
+            table {
+                width: 100%;
+                border-spacing: 0px;
+                font-size: 15px;
+            }
+            tr:nth-child(odd) {background-color: lightsteelblue}
+            tr:hover {background-color: brown}
+            
 
 
     </style>
@@ -471,16 +503,17 @@
     svg.selectAll("bar")
         .data(data)
       .enter().append("rect")
-        .style("fill", "steelblue")
+        .attr("class","barChart")
         .attr("x", function(d) { return x(d.date); })
         .attr("width", x.rangeBand())
         .attr("y", function(d) { return y(d.value); })
         .attr("height", function(d) { return height - y(d.value); });
 
   });
-
+  $("#delivery").append("<tr><th>BLABLABLA</th><th>sdf</th><th>qew</th><th>asdf asdf </th><th>asdf</th></tr>");
+  $("#delivery").append("<tr><th>BLABLABLA</th><th>sdf</th><th>qew</th><th>asdf asdf </th><th>asdf</th></tr>");
+  $("#delivery").append("<tr><th>BLABLABLA</th><th>sdf</th><th>qew</th><th>asdf asdf </th><th>asdf</th></tr>");
 }
-
 
       
 </script>
