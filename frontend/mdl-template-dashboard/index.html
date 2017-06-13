@@ -111,11 +111,17 @@
                 <tr style="background-color:steelblue;" style="font-size: 20px; text-align:center;">
                     <th>REF NO</th>
                     <th>Type</th>
-                    <th>Total</th>
-                    <th>Due Date </th>
-                    <th>Device</th>
+                    <th>Due Date</th>
+                    <th>Days Left</th>
                 </tr>
               </table>
+              <div style="text-align:center;margin-top:5px;">
+                <button id="loadButton" class="mdl-button mdl-js-button mdl-button--fab mdl-button--colored" onclick="loadMore()">
+                  <i class="material-icons">add</i>
+                </button>
+                <div style="display:none;margin: 0px auto;" id="loader"></div>
+              <div>
+                
             </div>
           </div>
           <div class="window" id="queue" >
@@ -174,6 +180,7 @@
     <script src="https://code.getmdl.io/1.3.0/material.min.js"></script>
     <script src="https://d3js.org/d3.v3.min.js"></script>
     <script src="https://code.jquery.com/jquery-latest.js"></script>
+    <script src="jquery-csv.js"></script>
     <style>
 
 
@@ -247,6 +254,19 @@
             tr:hover {background-color: brown}
             
 
+    #loader {
+    border: 16px solid #f3f3f3; /* Light grey */
+    border-top: 16px solid #3498db; /* Blue */
+    border-radius: 50%;
+    width: 120px;
+    height: 120px;
+    animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
 
     </style>
     <script>
@@ -357,9 +377,9 @@
       .attr("x", (width + (margin.left + margin.right) )/ 2)
       .attr("y", 0 + margin.top)
       .attr("text-anchor", "middle")
-      .style("font-size", "16px")
+      .style("font-size", "20px")
       .style("font-family", "sans-serif")
-      .text("BLABLABLA");
+      .text("Cycle Time Prediction");
     
     // x axis label
     svg.append("text")
@@ -510,11 +530,38 @@
         .attr("height", function(d) { return height - y(d.value); });
 
   });
-  $("#delivery").append("<tr><th>BLABLABLA</th><th>sdf</th><th>qew</th><th>asdf asdf </th><th>asdf</th></tr>");
-  $("#delivery").append("<tr><th>BLABLABLA</th><th>sdf</th><th>qew</th><th>asdf asdf </th><th>asdf</th></tr>");
-  $("#delivery").append("<tr><th>BLABLABLA</th><th>sdf</th><th>qew</th><th>asdf asdf </th><th>asdf</th></tr>");
+
+var types =Array("PE","PE Equipée","SS Ensemble");
+
+  for(count = 0; count < 10; count++){
+    var daysLeft = (Math.floor(Math.random() * (5 - 0 + 1)) + 0);
+    var daysLeftCss = "";
+    if(daysLeft==0){
+      daysLeftCss = "style=color:red;";
+    }
+    
+    $("#delivery").append("<tr><th>"+ Math.random()*1000 +"</th><th>" + types[Math.floor(Math.random()*types.length)]+"</th><th>"+ (Math.floor(Math.random() * (30 - 25 + 1)) + 25)+" days </th><th " + daysLeftCss + ">"+ daysLeft +" days left</th></tr>");
+  }
 }
 
+function loadMore() {
+  document.getElementById("loadButton").style.display="none";
+  document.getElementById("loader").style.display="block";
+  var types =Array("PE","PE Equipée","SS Ensemble");
+  setTimeout(function() {
+    for(count = 0; count < 10; count++){
+      var daysLeft = (Math.floor(Math.random() * (5 - 0 + 1)) + 0);
+      var daysLeftCss = "";
+      if(daysLeft==0){
+        daysLeftCss = "style=color:red;";
+      }
+      
+      $("#delivery").append("<tr><th>"+ Math.random()*1000 +"</th><th>" + types[Math.floor(Math.random()*types.length)]+"</th><th>"+ (Math.floor(Math.random() * (30 - 25 + 1)) + 25)+" days </th><th " + daysLeftCss + ">"+ daysLeft +" days left</th></tr>");
+    }
+    document.getElementById("loader").style.display="none";
+    document.getElementById("loadButton").style.display="block";
+  }
+, 2000);}
       
 </script>
 
