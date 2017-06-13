@@ -125,7 +125,10 @@
             </div>
           </div>
           <div class="window" id="queue" >
-            okgapkrsgora
+            <div  style="width=100%;font-size:40px;">
+              <span> Load Assembly Line #1: </span>
+              <span id="liveTracker"> ... </span>
+            </div>
           </div>
     </div>
       <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" style="position: fixed; left: -1000px; height: -1000px;">
@@ -285,7 +288,17 @@
     }
     function showQueue() {
       $(".window" ).hide();
+      var t=setInterval(httpGet("http://taschenanwalt.pythonanywhere.com/fetch"),1000);
       $("#queue" ).show();
+    }
+
+
+
+    function httpGet(theUrl)
+    {
+      $.get(theUrl, function( data ) {
+      $("#liveTracker" ).html(data);
+      });
     }
 
     // ########### OVERVIEW ##########
